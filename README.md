@@ -4,7 +4,7 @@ A idéia principal é que quando um usuário acesse o nginx, o mesmo fará uma c
 
 O retorno da aplicação node.js para o nginx deverá ser:
 
-"<h1>Full Cycle Rocks!</h1>"
+\<h1>Full Cycle Rocks!\</h1>
 
 - Lista de nomes cadastrada no banco de dados.
 
