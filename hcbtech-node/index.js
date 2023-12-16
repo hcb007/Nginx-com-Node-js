@@ -1,4 +1,4 @@
-const express = require('express')
+import express from 'express';
 const app = express()
 const port = 3000
 const config = {
@@ -7,11 +7,11 @@ const config = {
     password: 'root',
     database: 'nodedb'
 };
-const mysql = require('mysql')
-const random_name = require('node-random-name');
+import { createConnection } from 'mysql';
+import random_name from 'node-random-name';
 
 app.get('/', (req,res) => {
-    var connection = mysql.createConnection(config)
+    var connection = createConnection(config)
     var sql = 'INSERT INTO people(name) values ("' + random_name() + '")';
     
     connection.query(sql)
