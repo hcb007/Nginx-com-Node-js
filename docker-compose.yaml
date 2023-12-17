@@ -2,13 +2,30 @@ version: '3'
 
 services:
 
+  db:
+    image: mysql:5.7
+    command: --innodb-use-native-aio=0
+    container_name: db
+    restart: always
+    tty: true
+    volumes:
+      - ./hcbtech-mysql:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=nodedb
+      - MYSQL_ROOT_PASSWORD=root
+    networks:
+      - node-network
+
   app:
-    build: 
+    build:
       context: ./hcbtech-node
       dockerfile: Dockerfile
     image: hcbtechsolutions/app
     container_name: app
-    entrypoint: dockerize -wait tcp://db:3306 -timeout 60s npm start
+    volumes:
+      - ./hcbtech-node:/usr/src/app
+    entrypoint: dockerize -wait tcp://db:3306 -timeout 60s
+    command:  /bin/sh -c "npm install && npm start"
     networks:
       - node-network
     tty: true
@@ -17,36 +34,21 @@ services:
     depends_on:
       - db
 
-  db:
-    image: mysql:5.7
-    command: --innodb-use-native-aio=0
-    container_name: db
-    restart: always
-    tty: true
-    volumes: 
-      - ./hcbtech-mysql:/var/lib/mysql
-    environment: 
-      - MYSQL_DATABASE=nodedb
-      - MYSQL_ROOT_PASSWORD=root
-    networks: 
-      - node-network
-
-
   nginx:
     build:
       context: ./hcbtech-nginx
       dockerfile: Dockerfile.prd
     image: hcbtechsolutions/nginx-nodejs:prd
     container_name: nginx
-    entrypoint: dockerize -wait tcp://app:3000 -timeout 50s nginx -g "daemon off;"
+    entrypoint: dockerize -wait tcp://app:3000 -timeout 80s nginx -g "daemon off;"
     networks:
       - node-network
     ports:
       - "8080:80"
     depends_on:
+      - db
       - app
-    
 
-networks: 
+networks:
   node-network:
-    driver: bridge   
+    driver: bridge

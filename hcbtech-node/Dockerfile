@@ -2,12 +2,6 @@ FROM node:alpine
 
 WORKDIR /usr/src/app
 
-COPY package*.json .
-
-RUN npm install
-
-COPY . .
-
 RUN apk upgrade -U -a
 
 ENV DOCKERIZE_VERSION v0.7.0
